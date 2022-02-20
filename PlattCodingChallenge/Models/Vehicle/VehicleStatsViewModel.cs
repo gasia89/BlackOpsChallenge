@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PlattCodingChallenge.Models
+﻿namespace PlattCodingChallenge.Models.Vehicle
 {
+	/// <summary>
+	/// Model for displaying vehicle statistics.
+	/// </summary>
 	public class VehicleStatsViewModel
 	{
 		public string ManufacturerName { get; set; }
