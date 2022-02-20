@@ -1,0 +1,49 @@
+﻿@model PlattCodingChallenge.Models.Financial.EpisodeStarshipFinancialDetailsViewModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Episode Starship Financial Summary</title>
+</head>
+<body>
+    <div>
+        <h3>Episode @Model.FilmDetailsViewModel.EpisodeId Starship Financial Summary</h3>
+        <ul>
+            <li>@Model.FilmDetailsViewModel.Title</li>
+            <li>Number of Starships Calculated: @Model.NumberOfStarshipsInEpisodeWithCostAndCargo</li>
+            <li>Average Cost of Cargo per Unit per Starship: @Model.AverageCostPerCargoPerShip.ToString("N2") Credits</li>
+        </ul>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td>Starship Name</td>
+                    <td>Cargo Capacity</td>
+                    <td>Starship Cost (In Credits)</td>
+                    <td>Cost Per Unit of Cargo (In Credits)</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model.CostPerCargoViewModels)
+                {
+                    <tr>
+                        <td>@d.Name</td>
+                        <td>@d.CargoCapacity</td>
+                        @if (int.TryParse(d.CostInCredits, out int cost))
+                        {
+                            <td>@cost.ToString("N2")</td>
+                        }
+                        else
+                        {
+                           <td>@d.CostInCredits</td> 
+                        }
+                        
+                        <td>@d.CostPerUnitOfCargo.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

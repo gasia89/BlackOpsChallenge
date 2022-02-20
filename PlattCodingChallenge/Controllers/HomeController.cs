@@ -1,49 +1,121 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PlattCodingChallenge.Models;
+using PlattCodingChallenge.Interfaces;
+using PlattCodingChallenge.Models.Financial;
+using PlattCodingChallenge.Models.People;
+using PlattCodingChallenge.Models.Planet;
+using PlattCodingChallenge.Models.Vehicle;
+using System.Threading.Tasks;
 
 namespace PlattCodingChallenge.Controllers
 {
 	public class HomeController : Controller
 	{
-		public ActionResult Index()
+		#region Fields
+		private readonly IVehicleService _vehicleService;
+		private readonly IPlanetService _planetService;
+		private readonly IPeopleService _peopleService;
+		private readonly IFinancialService _financialService;
+		#endregion
+
+		#region Ctor(s)
+		public HomeController(IVehicleService vehicleService, IPlanetService planetService, IPeopleService peopleService, IFinancialService financialService)
+		{
+			_vehicleService = vehicleService;
+			_planetService = planetService;
+			_peopleService = peopleService;
+			_financialService = financialService;
+		}
+		#endregion
+
+		[HttpGet]
+		public IActionResult Index()
 		{
 			return View();
 		}
 
-		public ActionResult GetAllPlanets()
+		[HttpGet]
+		public async Task<IActionResult> GetAllPlanets()
 		{
-			var model = new AllPlanetsViewModel();
+			AllPlanetsViewModel vm = await _planetService.GetAllPlanetsViewModelAsync();
 
-			// TODO: Implement this controller action
+			if (vm == null)
+			{
+				return NotFound();
+			}
 
-			return View(model);
+			return View(vm);
 		}
 
-		public ActionResult GetPlanetById(int planetid)
+		[HttpGet]
+		public async Task<IActionResult> GetPlanetById(int planetid)
 		{
-			var model = new SinglePlanetViewModel();
+			SinglePlanetViewModel vm;
 
-			// TODO: Implement this controller action
+			if (planetid <= 0)
+			{
+				return BadRequest();
+			}
 
-			return View(model);
+			vm = await _planetService.GetSinglePlanetViewModelAsync(planetid);
+
+			if (vm == null)
+			{
+				return NotFound();
+			}
+
+			return View(vm);
 		}
 
-		public ActionResult GetResidentsOfPlanet(string planetname)
+		[HttpGet]
+		public async Task<IActionResult> GetResidentsOfPlanet(string planetname)
 		{
-			var model = new PlanetResidentsViewModel();
+			PlanetResidentsViewModel vm;
 
-			// TODO: Implement this controller action
+			if (string.IsNullOrWhiteSpace(planetname))
+			{
+				return BadRequest();
+			}
+			vm = await _peopleService.GetPlanetResidentsViewModelAsync(planetname);
 
-			return View(model);
+			if (vm == null)
+			{
+				return NotFound();
+			}
+
+			return View(vm);
 		}
 
-		public ActionResult VehicleSummary()
+		[HttpGet]
+		public async Task<IActionResult> VehicleSummary()
 		{
-			var model = new VehicleSummaryViewModel();
+			VehicleSummaryViewModel vm = await _vehicleService.GetVehicleSummaryViewModelAsync();
 
-			// TODO: Implement this controller action
+			if (vm == null)
+			{
+				return NotFound();
+			}
 
-			return View(model);
+			return View(vm);
 		}
-    }
+
+		[HttpGet]
+		public async Task<IActionResult> GetStarshipCostPerCargoByEpisodeId(int episodeid)
+		{
+			EpisodeStarshipFinancialDetailsViewModel vm;
+
+			if (episodeid <= 0)
+			{
+				return BadRequest();
+			}
+
+			vm = await _financialService.GetEpisodeStarshipFinancialDetailsViewModelByEpisodeIdAsync(episodeid);
+			
+			if (vm == null)
+			{
+				return NotFound();
+			}
+
+			return View(vm);
+		}
+	}
 }
